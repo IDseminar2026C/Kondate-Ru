@@ -2,6 +2,7 @@ const STORAGE_KEY = 'kondateru_dishes';
 
 const form = document.getElementById('dish-form');
 const nameInput = document.getElementById('dish-name');
+const tagInput = document.getElementById('dish-tags'); // タグの入力欄
 const formError = document.getElementById('form-error');
 const list = document.getElementById('dish-list');
 const emptyMessage = document.getElementById('empty-message');
@@ -33,13 +34,47 @@ function deleteDish(id) {
   render();
 }
 
-// 料理1件ぶんの行（料理名＋削除ボタン）を作る
+// タグ欄の文字を「、」「,」スペースで区切って、タグの配列にする
+function parseTags(text) {
+  const tags = text
+    .split(/[、,，\s]+/) // 区切り文字で分ける
+    .map((tag) => tag.trim())
+    .filter((tag) => tag !== ''); // 空のタグは取り除く
+  // 同じタグが2回書かれていたら、1つだけ残す
+  return tags.filter((tag, index) => tags.indexOf(tag) === index);
+}
+
+// タグを小さなラベルとして並べた部分を作る
+function createTagList(tags) {
+  const tagList = document.createElement('div');
+  tagList.className = 'tag-list';
+  tags.forEach((tag) => {
+    const tagSpan = document.createElement('span');
+    tagSpan.className = 'tag';
+    tagSpan.textContent = tag; // innerHTML を使わず XSS を防ぐ
+    tagList.appendChild(tagSpan);
+  });
+  return tagList;
+}
+
+// 料理1件ぶんの行（料理名＋タグ＋削除ボタン）を作る
 function createDishItem(dish) {
   const li = document.createElement('li');
+
+  // 料理名とタグをまとめる入れ物（タグは料理名の下に出る）
+  const info = document.createElement('div');
+  info.className = 'dish-info';
 
   const nameSpan = document.createElement('span');
   nameSpan.className = 'dish-name';
   nameSpan.textContent = dish.name; // innerHTML を使わず XSS を防ぐ
+  info.appendChild(nameSpan);
+
+  // 前に登録した料理にはタグが無いことがあるので、そのときは空として扱う
+  const tags = Array.isArray(dish.tags) ? dish.tags : [];
+  if (tags.length > 0) {
+    info.appendChild(createTagList(tags));
+  }
 
   const deleteButton = document.createElement('button');
   deleteButton.type = 'button';
@@ -47,7 +82,7 @@ function createDishItem(dish) {
   deleteButton.textContent = '削除';
   deleteButton.addEventListener('click', () => deleteDish(dish.id));
 
-  li.appendChild(nameSpan);
+  li.appendChild(info);
   li.appendChild(deleteButton);
   return li;
 }
@@ -96,12 +131,13 @@ form.addEventListener('submit', (event) => {
   }
   formError.hidden = true;
 
-  // tags は後でタグ機能を追加するときのために空配列で持っておく
-  dishes.push({ id: Date.now().toString(), name: name, tags: [] });
+  const tags = parseTags(tagInput.value); // 入力されたタグの配列
+  dishes.push({ id: Date.now().toString(), name: name, tags: tags });
   saveDishes(dishes);
   render();
 
   nameInput.value = '';
+  tagInput.value = '';
   nameInput.focus();
 });
 

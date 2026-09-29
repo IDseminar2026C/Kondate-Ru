@@ -23,7 +23,9 @@
     <section class="card">
       <h2>料理を登録する</h2>
       <form id="dish-form" class="dish-form">
-        <input type="text" id="dish-name" placeholder="料理名（例：カレーライス）" maxlength="50">
+        <input type="text" id="dish-name" class="name-input" placeholder="料理名（例：カレーライス）" maxlength="50">
+        <!-- タグ入力欄：「、」やスペースで区切ると複数書ける（空でもOK） -->
+        <input type="text" id="dish-tags" placeholder="タグ（例：がっつり、時短）" maxlength="100">
         <button type="submit">追加</button>
       </form>
       <p id="form-error" class="error" hidden>料理名を入力してください。</p>

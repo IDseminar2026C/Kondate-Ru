@@ -42,7 +42,13 @@ body {
 
 .dish-form {
   display: flex;
+  flex-wrap: wrap; /* 入りきらないときは次の行に回す */
   gap: 8px;
+}
+
+/* 料理名の入力欄は1行まるごと使う（下の行にタグ欄と追加ボタンが並ぶ） */
+.dish-form .name-input {
+  flex-basis: 100%;
 }
 
 .dish-form input {
@@ -95,6 +101,29 @@ body {
 .dish-name {
   flex: 1;
   min-width: 0;
+}
+
+/* 料理名とタグの入れ物も、残りの幅いっぱいに広げる */
+.dish-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* タグを横に並べる（入りきらなければ折り返す） */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* タグ1つぶんの小さな丸いラベル */
+.tag {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  background: #fde6d8;
+  color: #b4521f;
 }
 
 /* 削除ボタン */

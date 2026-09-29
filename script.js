@@ -9,6 +9,8 @@ const emptyMessage = document.getElementById('empty-message');
 const pickButton = document.getElementById('pick-button'); // 「献立を決める！」ボタン
 const pickResult = document.getElementById('pick-result'); // 選ばれた料理名を出す場所
 const pickError = document.getElementById('pick-error'); // 料理が0件のときのお知らせ
+const tagFilter = document.getElementById('tag-filter'); // 絞り込み用のチェックボックスを並べる場所
+const pickNoMatch = document.getElementById('pick-no-match'); // 条件に合う料理がないときのお知らせ
 let lastPickedId = null; // 前回選ばれた料理の id（二連続で同じ料理を出さないために覚えておく）
 
 // localStorage から料理一覧を読み込む（壊れていたら空にする）
@@ -87,12 +89,68 @@ function createDishItem(dish) {
   return li;
 }
 
+// 料理のタグを取り出す（前に登録した料理でタグが無いときは空にする）
+function getTags(dish) {
+  return Array.isArray(dish.tags) ? dish.tags : [];
+}
+
+// 登録済みの料理に付いているタグを、重なりなしで集める
+function getAllTags() {
+  const allTags = []; // 集めたタグを入れていくリスト
+  dishes.forEach((dish) => {
+    getTags(dish).forEach((tag) => {
+      if (!allTags.includes(tag)) {
+        allTags.push(tag);
+      }
+    });
+  });
+  return allTags;
+}
+
+// 今チェックが付いているタグの一覧を返す
+function getCheckedTags() {
+  const checkedBoxes = tagFilter.querySelectorAll('input:checked');
+  return Array.from(checkedBoxes).map((box) => box.value);
+}
+
+// タグ1つぶんのチェックボックス（押しやすいように文字ごと label で包む）を作る
+function createTagCheckbox(tag, isChecked) {
+  const label = document.createElement('label');
+  label.className = 'tag-option';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.value = tag;
+  checkbox.checked = isChecked;
+
+  label.appendChild(checkbox);
+  label.appendChild(document.createTextNode(tag)); // innerHTML を使わず XSS を防ぐ
+  return label;
+}
+
+// 絞り込み用のチェックボックスを作り直す（残っているタグのチェックはそのまま）
+function renderTagFilter() {
+  const checkedTags = getCheckedTags(); // 作り直す前のチェック状態を覚えておく
+  tagFilter.innerHTML = '';
+  getAllTags().forEach((tag) => {
+    tagFilter.appendChild(createTagCheckbox(tag, checkedTags.includes(tag)));
+  });
+}
+
 function render() {
   list.innerHTML = '';
   dishes.forEach((dish) => {
     list.appendChild(createDishItem(dish));
   });
   emptyMessage.hidden = dishes.length > 0;
+  renderTagFilter();
+}
+
+// チェックしたタグが全部付いている料理だけを返す（チェックなしなら全部の料理）
+function filterByTags(checkedTags) {
+  return dishes.filter((dish) => {
+    return checkedTags.every((tag) => getTags(dish).includes(tag));
+  });
 }
 
 // 登録済みの料理からランダムに1つ選んで表示する
@@ -100,15 +158,25 @@ function pickRandomDish() {
   // 料理が1件もないときは、お知らせ文を出して終わる
   if (dishes.length === 0) {
     pickResult.hidden = true;
+    pickNoMatch.hidden = true;
     pickError.hidden = false;
     return;
   }
   pickError.hidden = true;
 
-  // 前回選ばれた料理を除いた候補を作る（料理が1件だけのときは、その1件を候補にする）
-  let candidates = dishes.filter((dish) => dish.id !== lastPickedId);
+  // チェックしたタグで絞り込む。1件も合わなければ、お知らせ文を出して終わる
+  const matchedDishes = filterByTags(getCheckedTags());
+  if (matchedDishes.length === 0) {
+    pickResult.hidden = true;
+    pickNoMatch.hidden = false;
+    return;
+  }
+  pickNoMatch.hidden = true;
+
+  // 前回選ばれた料理を除いた候補を作る（候補が1件だけのときは、その1件を候補にする）
+  let candidates = matchedDishes.filter((dish) => dish.id !== lastPickedId);
   if (candidates.length === 0) {
-    candidates = dishes;
+    candidates = matchedDishes;
   }
 
   // 0 〜（候補の数 - 1）の中から、ランダムな番号を1つ決める

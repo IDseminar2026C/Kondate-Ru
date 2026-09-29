@@ -142,6 +142,28 @@ body {
   border-bottom: none;
 }
 
+/* 絞り込み用のチェックボックスを横に並べる（入りきらなければ折り返す） */
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* チェックボックス1つぶん（文字ごとクリックできる丸い枠） */
+.tag-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border: 1px solid #e8743b;
+  border-radius: 999px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
 /* 「献立を決める！」ボタン（追加ボタンと同じ色） */
 .pick-button {
   width: 100%;

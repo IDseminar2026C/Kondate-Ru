@@ -5,6 +5,9 @@ const nameInput = document.getElementById('dish-name');
 const formError = document.getElementById('form-error');
 const list = document.getElementById('dish-list');
 const emptyMessage = document.getElementById('empty-message');
+const pickButton = document.getElementById('pick-button'); // 「献立を決める！」ボタン
+const pickResult = document.getElementById('pick-result'); // 選ばれた料理名を出す場所
+const pickError = document.getElementById('pick-error'); // 料理が0件のときのお知らせ
 
 // localStorage から料理一覧を読み込む（壊れていたら空にする）
 function loadDishes() {
@@ -55,6 +58,24 @@ function render() {
   });
   emptyMessage.hidden = dishes.length > 0;
 }
+
+// 登録済みの料理からランダムに1つ選んで表示する
+function pickRandomDish() {
+  // 料理が1件もないときは、お知らせ文を出して終わる
+  if (dishes.length === 0) {
+    pickResult.hidden = true;
+    pickError.hidden = false;
+    return;
+  }
+  pickError.hidden = true;
+
+  // 0 〜（料理の数 - 1）の中から、ランダムな番号を1つ決める
+  const index = Math.floor(Math.random() * dishes.length);
+  pickResult.textContent = dishes[index].name;
+  pickResult.hidden = false;
+}
+
+pickButton.addEventListener('click', pickRandomDish);
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();

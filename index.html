@@ -12,6 +12,14 @@
   </header>
 
   <main class="container">
+    <!-- 献立提案エリア：ボタンを押すと料理をランダムに1つ表示する -->
+    <section class="card">
+      <h2>今日の献立</h2>
+      <button type="button" id="pick-button" class="pick-button">献立を決める！</button>
+      <p id="pick-result" class="pick-result" hidden></p>
+      <p id="pick-error" class="error" hidden>先に料理を登録してください。</p>
+    </section>
+
     <section class="card">
       <h2>料理を登録する</h2>
       <form id="dish-form" class="dish-form">

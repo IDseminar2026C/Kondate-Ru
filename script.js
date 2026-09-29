@@ -8,6 +8,7 @@ const emptyMessage = document.getElementById('empty-message');
 const pickButton = document.getElementById('pick-button'); // 「献立を決める！」ボタン
 const pickResult = document.getElementById('pick-result'); // 選ばれた料理名を出す場所
 const pickError = document.getElementById('pick-error'); // 料理が0件のときのお知らせ
+let lastPickedId = null; // 前回選ばれた料理の id（二連続で同じ料理を出さないために覚えておく）
 
 // localStorage から料理一覧を読み込む（壊れていたら空にする）
 function loadDishes() {
@@ -69,9 +70,17 @@ function pickRandomDish() {
   }
   pickError.hidden = true;
 
-  // 0 〜（料理の数 - 1）の中から、ランダムな番号を1つ決める
-  const index = Math.floor(Math.random() * dishes.length);
-  pickResult.textContent = dishes[index].name;
+  // 前回選ばれた料理を除いた候補を作る（料理が1件だけのときは、その1件を候補にする）
+  let candidates = dishes.filter((dish) => dish.id !== lastPickedId);
+  if (candidates.length === 0) {
+    candidates = dishes;
+  }
+
+  // 0 〜（候補の数 - 1）の中から、ランダムな番号を1つ決める
+  const index = Math.floor(Math.random() * candidates.length);
+  const picked = candidates[index]; // 今回選ばれた料理
+  lastPickedId = picked.id;
+  pickResult.textContent = picked.name;
   pickResult.hidden = false;
 }
 

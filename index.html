@@ -15,9 +15,12 @@
     <!-- 献立提案エリア：ボタンを押すと料理をランダムに1つ表示する -->
     <section class="card">
       <h2>今日の献立</h2>
+      <!-- タグの絞り込み：チェックしたタグが全部付いた料理だけから選ぶ（中身は script.js で作る） -->
+      <div id="tag-filter" class="tag-filter"></div>
       <button type="button" id="pick-button" class="pick-button">献立を決める！</button>
       <p id="pick-result" class="pick-result" hidden></p>
       <p id="pick-error" class="error" hidden>先に料理を登録してください。</p>
+      <p id="pick-no-match" class="error" hidden>この組み合わせの料理がありません。</p>
     </section>
 
     <section class="card">

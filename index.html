@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>こんだてーる</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>こんだてーる</h1>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>料理を登録する</h2>
+      <form id="dish-form" class="dish-form">
+        <input type="text" id="dish-name" placeholder="料理名（例：カレーライス）" maxlength="50">
+        <button type="submit">追加</button>
+      </form>
+      <p id="form-error" class="error" hidden>料理名を入力してください。</p>
+    </section>
+
+    <section class="card">
+      <h2>登録済みの料理</h2>
+      <p id="empty-message" class="empty">まだ料理が登録されていません。</p>
+      <ul id="dish-list" class="dish-list"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

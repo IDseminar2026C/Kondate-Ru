@@ -22,12 +22,36 @@ function saveDishes(dishes) {
 
 let dishes = loadDishes();
 
+// 指定した id の料理を消して、保存し直し、一覧を表示し直す
+function deleteDish(id) {
+  dishes = dishes.filter((dish) => dish.id !== id);
+  saveDishes(dishes);
+  render();
+}
+
+// 料理1件ぶんの行（料理名＋削除ボタン）を作る
+function createDishItem(dish) {
+  const li = document.createElement('li');
+
+  const nameSpan = document.createElement('span');
+  nameSpan.className = 'dish-name';
+  nameSpan.textContent = dish.name; // innerHTML を使わず XSS を防ぐ
+
+  const deleteButton = document.createElement('button');
+  deleteButton.type = 'button';
+  deleteButton.className = 'delete-button';
+  deleteButton.textContent = '削除';
+  deleteButton.addEventListener('click', () => deleteDish(dish.id));
+
+  li.appendChild(nameSpan);
+  li.appendChild(deleteButton);
+  return li;
+}
+
 function render() {
   list.innerHTML = '';
   dishes.forEach((dish) => {
-    const li = document.createElement('li');
-    li.textContent = dish.name; // innerHTML を使わず XSS を防ぐ
-    list.appendChild(li);
+    list.appendChild(createDishItem(dish));
   });
   emptyMessage.hidden = dishes.length > 0;
 }

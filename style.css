@@ -82,9 +82,31 @@ body {
 }
 
 .dish-list li {
+  /* 料理名を左、削除ボタンを右に並べる */
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 4px;
   border-bottom: 1px solid #eee;
   overflow-wrap: anywhere;
+}
+
+/* 料理名は残りの幅いっぱいに広げる（長い名前は折り返す） */
+.dish-name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 削除ボタン */
+.delete-button {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #c62828;
+  border-radius: 8px;
+  background: #fff;
+  color: #c62828;
+  cursor: pointer;
 }
 
 .dish-list li:last-child {

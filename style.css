@@ -185,3 +185,28 @@ body {
   color: #e8743b;
   overflow-wrap: anywhere;
 }
+
+/* アプリの使い方（①②③の箇条書き） */
+.how-to {
+  list-style: none; /* 先頭の「・」を消して①②③だけを見せる */
+  margin: 0 0 12px;
+  padding: 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.6;
+  overflow-wrap: anywhere; /* スマホで長い文がはみ出さないように折り返す */
+}
+
+/* 使い方の補足（改行して、①の文字の右にそろえる） */
+.how-to-note {
+  display: block; /* 1行下に表示する */
+  padding-left: 1.3em; /* 「①」と空白1つぶん右にずらす */
+}
+
+/* タグの書き方の説明（使い方と同じ小さめのグレー文字） */
+.form-note {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+  overflow-wrap: anywhere; /* スマホで長い文がはみ出さないように折り返す */
+}

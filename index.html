@@ -15,6 +15,15 @@
     <!-- 献立提案エリア：ボタンを押すと料理をランダムに1つ表示する -->
     <section class="card">
       <h2>今日の献立</h2>
+      <!-- アプリの使い方：①②③の順に説明する -->
+      <ul class="how-to">
+        <li>① 下の「料理を登録する」で、料理名とタグを入れて「追加」を押す
+          <!-- 補足：改行して、①の右から始める -->
+          <span class="how-to-note">（タグはなしでも登録できます）</span>
+        </li>
+        <li>② 今の気分に合うタグにチェックを入れる（入れなくてもOK）</li>
+        <li>③「献立を決める！」を押すと、今日の献立が追加されている料理の中からランダムに表示される</li>
+      </ul>
       <!-- タグの絞り込み：チェックしたタグが全部付いた料理だけから選ぶ（中身は script.js で作る） -->
       <div id="tag-filter" class="tag-filter"></div>
       <button type="button" id="pick-button" class="pick-button">献立を決める！</button>
@@ -31,6 +40,8 @@
         <input type="text" id="dish-tags" placeholder="タグ（例：がっつり、時短）" maxlength="100">
         <button type="submit">追加</button>
       </form>
+      <!-- タグの書き方の説明：区切ると複数登録できることを伝える -->
+      <p class="form-note">タグはスペース、または「、」で区切ると複数登録できます</p>
       <p id="form-error" class="error" hidden>料理名を入力してください。</p>
     </section>
 

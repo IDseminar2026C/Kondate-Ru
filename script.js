@@ -14,6 +14,7 @@ const pickNoMatch = document.getElementById('pick-no-match'); // 条件に合う
 const tagHistory = document.getElementById('tag-history'); // タグの履歴ボタンを並べる場所
 const tagHistoryEmpty = document.getElementById('tag-history-empty'); // タグが1つもないときのお知らせ
 let lastPickedId = null; // 前回選ばれた料理の id（二連続で同じ料理を出さないために覚えておく）
+let editingId = null; // 今編集している料理の id（編集していないときは null）
 
 // localStorage から料理一覧を読み込む（壊れていたら空にする）
 function loadDishes() {
@@ -35,6 +36,28 @@ let dishes = loadDishes();
 function deleteDish(id) {
   dishes = dishes.filter((dish) => dish.id !== id);
   saveDishes(dishes);
+  render();
+}
+
+// 編集を始める：その料理の行を入力欄に切り替える（編集できるのは1行ずつ）
+function startEdit(id) {
+  editingId = id;
+  render();
+}
+
+// 編集をやめる：何も変えずに元の表示に戻す
+function cancelEdit() {
+  editingId = null;
+  render();
+}
+
+// 指定した id の料理の名前とタグを書き換えて、保存し直し、一覧を表示し直す
+function updateDish(id, name, tags) {
+  const dish = dishes.find((item) => item.id === id); // 書き換える料理
+  dish.name = name;
+  dish.tags = tags;
+  saveDishes(dishes);
+  editingId = null;
   render();
 }
 
@@ -86,8 +109,70 @@ function createDishItem(dish) {
   deleteButton.textContent = '削除';
   deleteButton.addEventListener('click', () => deleteDish(dish.id));
 
+  // 編集ボタン（削除ボタンの左に置く）
+  const editButton = createButton('編集', 'edit-button', () => startEdit(dish.id));
+
   li.appendChild(info);
+  li.appendChild(editButton);
   li.appendChild(deleteButton);
+  return li;
+}
+
+// 文字・見た目の名前・押したときの動きを指定して、ボタンを作る
+function createButton(text, className, onClick) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = className;
+  button.textContent = text;
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+// 編集用の入力欄を作る（最初から今の内容を入れておく）
+function createEditInput(value, placeholder, maxLength) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'edit-input';
+  input.value = value;
+  input.placeholder = placeholder;
+  input.maxLength = maxLength;
+  return input;
+}
+
+// 「保存」を押したとき：料理名が空ならエラーを出し、そうでなければ保存する
+function saveEdit(id, nameEdit, tagEdit, editError) {
+  const name = nameEdit.value.trim(); // 新しい料理名
+  if (name === '') {
+    editError.hidden = false;
+    return;
+  }
+  updateDish(id, name, parseTags(tagEdit.value));
+}
+
+// 編集中の料理1件ぶんの行（料理名とタグの入力欄＋保存・キャンセルボタン）を作る
+function createEditItem(dish) {
+  const li = document.createElement('li');
+  li.className = 'edit-item';
+
+  const nameEdit = createEditInput(dish.name, '料理名（例：カレーライス）', 50); // 料理名の入力欄
+  const tagEdit = createEditInput(getTags(dish).join('、'), 'タグ（例：がっつり、時短）', 100); // タグの入力欄
+
+  // 料理名が空のときに出すお知らせ
+  const editError = document.createElement('p');
+  editError.className = 'error';
+  editError.textContent = '料理名を入力してください。';
+  editError.hidden = true;
+
+  // 保存ボタンとキャンセルボタンを横に並べる入れ物
+  const buttons = document.createElement('div');
+  buttons.className = 'edit-buttons';
+  buttons.appendChild(createButton('保存', 'save-button', () => saveEdit(dish.id, nameEdit, tagEdit, editError)));
+  buttons.appendChild(createButton('キャンセル', 'cancel-button', cancelEdit));
+
+  li.appendChild(nameEdit);
+  li.appendChild(tagEdit);
+  li.appendChild(editError);
+  li.appendChild(buttons);
   return li;
 }
 
@@ -172,7 +257,12 @@ function renderTagHistory() {
 function render() {
   list.innerHTML = '';
   dishes.forEach((dish) => {
-    list.appendChild(createDishItem(dish));
+    // 編集中の料理だけ入力欄の行にする
+    if (dish.id === editingId) {
+      list.appendChild(createEditItem(dish));
+    } else {
+      list.appendChild(createDishItem(dish));
+    }
   });
   emptyMessage.hidden = dishes.length > 0;
   renderTagFilter();

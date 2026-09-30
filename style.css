@@ -142,6 +142,63 @@ body {
   border-bottom: none;
 }
 
+/* 編集ボタン（削除ボタンと同じ形で、アプリの色） */
+.edit-button {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #e8743b;
+  border-radius: 8px;
+  background: #fff;
+  color: #e8743b;
+  cursor: pointer;
+}
+
+/* 編集中の行：スマホでもはみ出さないように、入力欄とボタンを縦に並べる */
+.dish-list .edit-item {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* 編集用の入力欄（登録フォームの入力欄と同じ見た目） */
+.edit-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* 保存ボタンとキャンセルボタンを横に並べる */
+.edit-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* 保存ボタン（追加ボタンと同じ色） */
+.save-button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: #e8743b;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* キャンセルボタン（目立たないグレー） */
+.cancel-button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+}
+
 /* 絞り込み用のチェックボックスを横に並べる（入りきらなければ折り返す） */
 .tag-filter {
   display: flex;

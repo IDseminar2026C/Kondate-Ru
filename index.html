@@ -45,6 +45,14 @@
       <p id="form-error" class="error" hidden>料理名を入力してください。</p>
     </section>
 
+    <!-- タグの履歴：今までに使ったタグを押すと、上のタグ入力欄に入る（中身は script.js で作る） -->
+    <section class="card">
+      <h2>タグの履歴</h2>
+      <p class="form-note">タグを押すと、「料理を登録する」のタグ欄に入ります</p>
+      <p id="tag-history-empty" class="empty">まだタグがありません。</p>
+      <div id="tag-history" class="tag-history"></div>
+    </section>
+
     <section class="card">
       <h2>登録済みの料理</h2>
       <p id="empty-message" class="empty">まだ料理が登録されていません。</p>

@@ -11,6 +11,8 @@ const pickResult = document.getElementById('pick-result'); // 選ばれた料理
 const pickError = document.getElementById('pick-error'); // 料理が0件のときのお知らせ
 const tagFilter = document.getElementById('tag-filter'); // 絞り込み用のチェックボックスを並べる場所
 const pickNoMatch = document.getElementById('pick-no-match'); // 条件に合う料理がないときのお知らせ
+const tagHistory = document.getElementById('tag-history'); // タグの履歴ボタンを並べる場所
+const tagHistoryEmpty = document.getElementById('tag-history-empty'); // タグが1つもないときのお知らせ
 let lastPickedId = null; // 前回選ばれた料理の id（二連続で同じ料理を出さないために覚えておく）
 
 // localStorage から料理一覧を読み込む（壊れていたら空にする）
@@ -137,6 +139,36 @@ function renderTagFilter() {
   });
 }
 
+// 履歴のタグをタグ入力欄に足す（すでに入っているタグは足さない）
+function addTagToInput(tag) {
+  const currentTags = parseTags(tagInput.value); // 今入力欄に入っているタグ
+  if (!currentTags.includes(tag)) {
+    currentTags.push(tag);
+  }
+  tagInput.value = currentTags.join('、');
+  tagInput.focus(); // どこに入ったか分かるように、入力欄にカーソルを移す
+}
+
+// 履歴のタグ1つぶんのボタンを作る
+function createTagHistoryButton(tag) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'tag-history-button';
+  button.textContent = tag; // innerHTML を使わず XSS を防ぐ
+  button.addEventListener('click', () => addTagToInput(tag));
+  return button;
+}
+
+// タグの履歴を作り直す
+function renderTagHistory() {
+  const allTags = getAllTags(); // 登録済みの料理に付いているタグ
+  tagHistory.innerHTML = '';
+  allTags.forEach((tag) => {
+    tagHistory.appendChild(createTagHistoryButton(tag));
+  });
+  tagHistoryEmpty.hidden = allTags.length > 0;
+}
+
 function render() {
   list.innerHTML = '';
   dishes.forEach((dish) => {
@@ -144,6 +176,7 @@ function render() {
   });
   emptyMessage.hidden = dishes.length > 0;
   renderTagFilter();
+  renderTagHistory();
 }
 
 // チェックしたタグが全部付いている料理だけを返す（チェックなしなら全部の料理）
